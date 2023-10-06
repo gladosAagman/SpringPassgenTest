@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Registration Form</title>
+</head>
+<body>
+    <h2>User Registration</h2>
+    <form id="registrationForm">
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" required><br>
+
+        <label for="middleName">Middle Name:</label>
+        <input type="text" id="middleName" required><br>
+
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" required><br>
+
+        <button type="button" id="generatePassword">Generate Password</button><br>
+
+        <label for="password">Password:</label>
+        <input type="text" id="password" readonly><br>
+
+        <button type="button" id="registerUser">Register User</button>
+    </form>
+
+    <script>
+        document.getElementById("generatePassword").addEventListener("click", function () {
+            var firstName = document.getElementById("firstName").value;
+            var middleName = document.getElementById("middleName").value;
+            var lastName = document.getElementById("lastName").value;
+
+            var password = generatePassword(firstName, middleName, lastName);
+            document.getElementById("password").value = password;
+        });
+
+        document.getElementById("registerUser").addEventListener("click", function () {
+            var firstName = document.getElementById("firstName").value;
+            var middleName = document.getElementById("middleName").value;
+            var lastName = document.getElementById("lastName").value;
+            var password = document.getElementById("password").value;
+
+            var userData = {
+                firstName: firstName,
+                middleName: middleName,
+                lastName: lastName
+            };
+
+            // Send an HTTP POST request to the Spring Boot backend
+            fetch('/api/users/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert("User created successfully!");
+                // You can redirect or perform other actions as needed
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Handle errors here
+            });
+        });
+
+        function generatePassword(firstName, middleName, lastName) {
+            var firstChars = firstName.slice(0, 2);
+            var middleChars = middleName.slice(0, 2);
+            var lastChars = lastName.slice(0, 2);
+
+            var randomNumber = Math.floor(Math.random() * 900) + 100;
+
+            return firstChars + middleChars + lastChars + randomNumber;
+        }
+    </script>
+</body>
+</html>
